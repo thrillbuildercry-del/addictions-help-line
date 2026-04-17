@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return signedIn() && role() == 'admin';
+    }
+
+    function isWorker() {
+      return signedIn() && role() == 'worker';
+    }
+
+    function validSelfSignup(userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role == 'worker'
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.keys().hasOnly(['email', 'role', 'createdAt']);
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAdmin() || validSelfSignup(userId);
+      allow update, delete: if isAdmin();
+    }
+
+    match /products/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /settings/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /sales/{id} {
+      allow create: if isWorker() || isAdmin();
+      allow read: if isAdmin() || (isWorker() && resource.data.user_id == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    match /inventory_logs/{id} {
+      allow read: if isAdmin();
+      allow create: if isWorker() || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
