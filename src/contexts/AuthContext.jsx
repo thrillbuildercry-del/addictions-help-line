@@ -17,6 +17,60 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+<<<<<<< Updated upstream
+      try {
+        if (!firebaseUser) {
+          setUser(null);
+          setProfile(null);
+          return;
+        }
+
+        setUser(firebaseUser);
+
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        let profileSnap = await getDoc(userRef);
+
+        if (!profileSnap.exists()) {
+          await setDoc(userRef, {
+            email: firebaseUser.email ?? '',
+            role: 'worker',
+            createdAt: serverTimestamp(),
+          });
+          profileSnap = await getDoc(userRef);
+        }
+
+        setProfile(profileSnap.exists() ? profileSnap.data() : null);
+      } catch (err) {
+        console.error('Failed to initialize auth profile', err);
+      } finally {
+=======
+<<<<<<< ours
+      if (!firebaseUser) {
+        setUser(null);
+        setProfile(null);
+>>>>>>> Stashed changes
+        setLoading(false);
+      }
+<<<<<<< Updated upstream
+=======
+
+      setUser(firebaseUser);
+
+      const userRef = doc(db, 'users', firebaseUser.uid);
+      let profileSnap = await getDoc(userRef);
+
+      if (!profileSnap.exists()) {
+        await setDoc(userRef, {
+          email: firebaseUser.email ?? '',
+          role: 'worker',
+          createdAt: serverTimestamp(),
+        });
+        profileSnap = await getDoc(userRef);
+      }
+
+      setProfile(profileSnap.exists() ? profileSnap.data() : null);
+      setLoading(false);
+=======
       try {
         if (!firebaseUser) {
           setUser(null);
@@ -44,6 +98,8 @@ export function AuthProvider({ children }) {
       } finally {
         setLoading(false);
       }
+>>>>>>> theirs
+>>>>>>> Stashed changes
     });
 
     return () => unsub();
