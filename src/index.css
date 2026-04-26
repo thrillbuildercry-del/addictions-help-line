@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply min-h-screen bg-slate-950 text-slate-100 antialiased;
+    background-image: radial-gradient(circle at top, rgb(30 41 59) 0%, rgb(2 6 23) 55%);
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-screen pb-20 text-slate-100;
+  }
+
+  .glass-card {
+    @apply rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur;
+  }
+
+  .field-input {
+    @apply mt-1 w-full rounded-xl border border-white/15 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none;
+  }
+
+  .btn-primary {
+    @apply rounded-xl bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-secondary {
+    @apply rounded-xl border border-white/20 bg-white/5 px-4 py-2 font-medium text-slate-100 transition hover:bg-white/10;
+  }
+}
